@@ -4,15 +4,23 @@ import random
 from bots import bot, vk
 
 
-async def send_message_to_tg(message: str):
-    await bot.send_message(
-        os.getenv('PASHA_SERYI_TG_ID'), message
-    )
+class Message:
+    def __init__(self, message: str):
+        self.message = message
 
 
-async def send_message_to_vk(message: str):
-    vk.messages.send(
-        user_id=os.getenv('PASHA_SERYI_VK_ID'),
-        random_id=random.randint(0, 999999999),
-        message=message
-    )
+class VKMessage(Message):
+    async def send(self) -> None:
+        vk.messages.send(
+            user_id=os.getenv('PASHA_SERYI_VK_ID'),
+            random_id=random.randint(0, 999999999),
+            message=self.message
+        )
+
+
+class TGMessage(Message):
+    async def send(self) -> None:
+        await bot.send_message(
+            os.getenv('PASHA_SERYI_TG_ID'),
+            self.message
+        )

@@ -3,7 +3,6 @@ from dotenv import load_dotenv
 from aiogram import Bot, Dispatcher
 import vk_api
 
-
 load_dotenv()
 
 dp = Dispatcher()

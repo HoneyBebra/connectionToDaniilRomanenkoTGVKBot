@@ -1,13 +1,17 @@
 from aiogram import types
 import asyncio
 
-from messages_sender import send_message_to_vk
+from messages_sender import VKMessage
 from bots import dp, bot
 
 
 @dp.message()
 async def echo_handler(message: types.Message) -> None:
-    await send_message_to_vk(message=message.text)
+    if message.sticker is not None:
+        pass
+
+    vk_message = VKMessage(message=message.text)
+    await vk_message.send()
 
 
 async def main() -> None:
