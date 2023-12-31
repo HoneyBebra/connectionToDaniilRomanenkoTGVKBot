@@ -5,7 +5,7 @@ from messages_sender import TGMessage
 from bots import vk_session
 
 
-async def listen() -> None:
+async def start_listen() -> None:
     longpoll = VkLongPoll(vk_session)
     for event in longpoll.listen():
         if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text:
@@ -14,4 +14,4 @@ async def listen() -> None:
 
 
 if __name__ == '__main__':
-    asyncio.run(listen())
+    asyncio.run(start_listen())
