@@ -8,7 +8,8 @@ from bots import dp, tg_bot
 @dp.message()
 async def echo_handler(message: types.Message) -> None:
     vk_message = VKMessage(
-        message=message.text, sticker=message.sticker
+        message=message.text, sticker=message.sticker,
+        voice=message.voice
     )
     await vk_message.send()
 
