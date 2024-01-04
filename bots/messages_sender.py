@@ -21,12 +21,12 @@ class Message:
 
 
 class VKMessage(Message):
-    async def _upload_photo_on_server(self, sticker_file_path) -> None:
+    async def _upload_photo_on_server(self, sticker_file_path: str) -> None:
         sticker_file = await tg_bot.download_file(sticker_file_path)
         photo = vk_upload.photo_messages(photos=sticker_file)[0]
         self.attachment = f"photo{photo['owner_id']}_{photo['id']}"
 
-    async def _upload_video_sticker_on_server(self, sticker_file_path) -> None:
+    async def _upload_video_sticker_on_server(self, sticker_file_path: str) -> None:
         # TODO: convert to .gif or .mp4
         file_url = f'https://api.telegram.org/file/bot{os.getenv("TG_TOKEN")}/{sticker_file_path}'
         file = {'file': ('video_sticker.webm', requests.get(file_url).content)}
@@ -49,33 +49,35 @@ class VKMessage(Message):
             else:
                 await self._upload_photo_on_server(sticker_file_path)
 
-    async def _voice_message_check(self):
+    async def _voice_message_check(self) -> None:
         if self.voice:
             voice_file = await tg_bot.get_file(self.voice.file_id)
             voice_file_path = voice_file.file_path
             voice = await tg_bot.download_file(voice_file_path)
 
             # TODO: can't send a bytes object, correct
-            with open('temp_voice/voice.mp3', 'wb') as f:
+            with open(f'temp/voice{os.getenv("PASHA_SERYI_VK_ID")}.mp3', 'wb') as f:
                 f.write(voice.getbuffer())
 
             voice = vk_upload.audio_message(
-                'temp_voice/voice.mp3', peer_id=os.getenv('PASHA_SERYI_VK_ID')
+                f'temp/voice{os.getenv("PASHA_SERYI_VK_ID")}.mp3',
+                peer_id=os.getenv('PASHA_SERYI_VK_ID')
             )['audio_message']
             self.attachment = f"audio_message{voice['owner_id']}_{voice['id']}"
 
-    async def _photo_message_check(self):
+    async def _photo_message_check(self) -> None:
         if self.photo:
             photo = await tg_bot.get_file(self.photo[-1].file_id)
             photo_path = photo.file_path
             await self._upload_photo_on_server(photo_path)
 
-    async def _video_circle_check(self):
+    async def _video_circle_check(self) -> None:
         if self.video_circle:
             circle_file = await tg_bot.get_file(self.video_circle.file_id)
             circle_file_path = circle_file.file_path
             circle = await tg_bot.download_file(circle_file_path)
-            print(circle)
+            with open(f'temp/circle{os.getenv("PASHA_SERYI_VK_ID")}.mp4', 'wb') as f:
+                f.write(circle.getbuffer())
 
     async def send(self) -> None:
         await self._sticker_check()

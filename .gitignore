@@ -156,4 +156,4 @@ cython_debug/
 .AppleDouble
 .LSOverride
 
-temp_voice/
+temp/
